@@ -1,0 +1,1 @@
+INSERT INTO Employee(id, username, password, phone, dept) VALUES (1, 'snehal','pass','8978370323', 'Payments');
