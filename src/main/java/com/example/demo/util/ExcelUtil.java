@@ -19,11 +19,9 @@ public class ExcelUtil {
         log.info("file location : " + fileLocation);
         List<Employee> employeeList = new ArrayList<>();
         try {
-            //open file
             FileInputStream file = new FileInputStream(new File(fileLocation));
             XSSFWorkbook workbook = new XSSFWorkbook(file);
 
-            //read each sheet
             Sheet sheet = workbook.getSheetAt(0);
             int i = 0;
             int nameCell = 0, joiningDateCell = 0, emailAddCell = 0, deptCell = 0, monthlySalCell = 0, jobStatCell = 0;
