@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS BATCH_JOB_EXECUTION;
 DROP TABLE IF EXISTS BATCH_JOB_INSTANCE;
 
 
-CREATE TABLE IF NOT EXISTS EMPLOYEE(`id` number PRIMARY KEY, `username` varchar(30), `password` varchar(20), `phone` varchar(12), `dept` varchar(20));
+CREATE TABLE IF NOT EXISTS EMPLOYEE(`name` varchar(30), `joining_date` varchar(20), `email_addr` varchar(30) PRIMARY KEY, `dept` varchar(20), `monthly_salary` varchar(50), job_status varchar(20));
 
 CREATE TABLE IF NOT EXISTS BATCH_JOB_INSTANCE  (
 	`JOB_INSTANCE_ID` BIGINT  NOT NULL PRIMARY KEY ,

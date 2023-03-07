@@ -1,1 +1,1 @@
-INSERT INTO Employee(id, username, password, phone, dept) VALUES (1, 'snehal','pass','8978370323', 'Payments');
+INSERT INTO Employee(name, joining_date, email_addr, dept, monthly_salary, job_status) VALUES ('snehal','31-Dec-21','email@domain.com', 'Technology', '10,000', 'Permanent');
