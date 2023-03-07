@@ -4,12 +4,11 @@ import com.example.demo.model.Employee;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +36,7 @@ public class ExcelUtil {
                 addEmployeeToEmpList(employeeList, nameCell, joiningDateCell, emailAddCell, deptCell, monthlySalCell, jobStatCell, row);
                 i++;
             }
+            file.close();
         } catch (FileNotFoundException e) {
             log.info("file not found at location : " + fileLocation);
             e.printStackTrace();
@@ -80,5 +80,57 @@ public class ExcelUtil {
                     break;
             }
         }
+    }
+
+    public void writeIntoExcelFile(String fileLocation, List<Employee> employeeList) {
+        log.info("file location : " + fileLocation);
+        try {
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            log.info("creating sheet");
+            XSSFSheet spreadsheet = workbook.createSheet(" Employee Data ");
+            log.info("sheet created");
+            XSSFRow row;
+            int i = 0;
+            for (Employee e : employeeList) {
+                row = spreadsheet.createRow(i);
+                if (i == 0) {
+                    log.info("setting header");
+                    createHeaders(row);
+                    log.info("header set: " + row.getCell(0) + "  " + row.getCell(1));
+                    i++;
+                    continue;
+                }
+                log.info("adding employee to sheet");
+                addEmployeeToSheet(e, row);
+                log.info("row set: " + row.getCell(0) + "  " + row.getCell(1));
+                i++;
+            }
+            FileOutputStream out = new FileOutputStream(new File(fileLocation));
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            log.info("file not found at location : " + fileLocation);
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addEmployeeToSheet(Employee employee, XSSFRow row) {
+        row.createCell(0).setCellValue(employee.getName());
+        row.createCell(1).setCellValue(employee.getJoining_date());
+        row.createCell(2).setCellValue(employee.getEmail_addr());
+        row.createCell(3).setCellValue(employee.getDept());
+        row.createCell(4).setCellValue(employee.getMonthly_salary());
+        row.createCell(5).setCellValue(employee.getJob_status());
+    }
+
+    private void createHeaders(XSSFRow row) {
+        row.createCell(0).setCellValue(Constants.NAME);
+        row.createCell(1).setCellValue(Constants.JOINING_DATE);
+        row.createCell(2).setCellValue(Constants.EMAIL_ADDRESS);
+        row.createCell(3).setCellValue(Constants.DEPARTMENT);
+        row.createCell(4).setCellValue(Constants.MONTHLY_SALARY);
+        row.createCell(5).setCellValue(Constants.JOB_STATUS);
     }
 }
