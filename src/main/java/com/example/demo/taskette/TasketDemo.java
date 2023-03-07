@@ -1,7 +1,5 @@
 package com.example.demo.taskette;
 
-import com.example.demo.repo.TaskletRepository;
-import com.example.demo.service.TaskletService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;

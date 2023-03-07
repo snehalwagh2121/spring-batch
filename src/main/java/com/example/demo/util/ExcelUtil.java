@@ -30,40 +30,11 @@ public class ExcelUtil {
             int nameCell = 0, joiningDateCell = 0, emailAddCell = 0, deptCell = 0, monthlySalCell = 0, jobStatCell = 0;
             for (Row row : sheet) {
                 if (i == 0) {
-                    for (int j = 0; j < row.getLastCellNum(); j++) {
-                        log.info("cell header value: " + row.getCell(j));
-                        switch (row.getCell(j).toString()) {
-                            case "Name":
-                                nameCell = j;
-                                break;
-                            case "Joining Date":
-                                joiningDateCell = j;
-                                break;
-                            case "Email Address":
-                                emailAddCell = j;
-                                break;
-                            case "Department":
-                                deptCell = j;
-                                break;
-                            case "Monthly Salary":
-                                monthlySalCell = j;
-                                break;
-                            case "Job Status":
-                                jobStatCell = j;
-                                break;
-                        }
-                    }
+                    assignCellValues(row, nameCell, joiningDateCell, emailAddCell, deptCell, monthlySalCell, jobStatCell);
                     i++;
                     continue;
                 }
-                employeeList.add(new Employee()
-                        .name(row.getCell(nameCell).toString())
-                        .joining_date(row.getCell(joiningDateCell).toString())
-                        .email_addr(row.getCell(emailAddCell).toString())
-                        .monthly_salary(row.getCell(monthlySalCell).toString())
-                        .dept(row.getCell(deptCell).toString())
-                        .job_status(row.getCell(jobStatCell).toString()));
-
+                addEmployeeToEmpList(employeeList, nameCell, joiningDateCell, emailAddCell, deptCell, monthlySalCell, jobStatCell, row);
                 i++;
             }
         } catch (FileNotFoundException e) {
@@ -73,5 +44,41 @@ public class ExcelUtil {
             e.printStackTrace();
         }
         return employeeList;
+    }
+
+    private void addEmployeeToEmpList(List<Employee> employeeList, int nameCell, int joiningDateCell, int emailAddCell, int deptCell, int monthlySalCell, int jobStatCell, Row row) {
+        employeeList.add(new Employee()
+                .name(row.getCell(nameCell).toString())
+                .joining_date(row.getCell(joiningDateCell).toString())
+                .email_addr(row.getCell(emailAddCell).toString())
+                .monthly_salary(row.getCell(monthlySalCell).toString())
+                .dept(row.getCell(deptCell).toString())
+                .job_status(row.getCell(jobStatCell).toString()));
+    }
+
+    private void assignCellValues(Row row, int nameCell, int joiningDateCell, int emailAddCell, int deptCell, int monthlySalCell, int jobStatCell) {
+        for (int j = 0; j < row.getLastCellNum(); j++) {
+            log.info("cell header value: " + row.getCell(j));
+            switch (row.getCell(j).toString()) {
+                case Constants.NAME:
+                    nameCell = j;
+                    break;
+                case Constants.JOINING_DATE:
+                    joiningDateCell = j;
+                    break;
+                case Constants.EMAIL_ADDRESS:
+                    emailAddCell = j;
+                    break;
+                case Constants.DEPARTMENT:
+                    deptCell = j;
+                    break;
+                case Constants.MONTHLY_SALARY:
+                    monthlySalCell = j;
+                    break;
+                case Constants.JOB_STATUS:
+                    jobStatCell = j;
+                    break;
+            }
+        }
     }
 }
