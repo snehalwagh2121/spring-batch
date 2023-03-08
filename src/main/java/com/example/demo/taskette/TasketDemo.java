@@ -39,11 +39,11 @@ public class TasketDemo {
                 .build();
     }
 
-    @Bean
-    public Job job() {
-        return jobs.get("job")
-                .start(stepOne())
-                .next(stepTwo())
-                .build();
-    }
+//    @Bean
+//    public Job taskletJob() {
+//        return jobs.get("job")
+//                .start(stepOne())
+//                .next(stepTwo())
+//                .build();
+//    }
 }
