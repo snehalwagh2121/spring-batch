@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS EMPLOYEE;
+DROP TABLE IF EXISTS SALESEMPLOYEE;
 DROP TABLE IF EXISTS BATCH_JOB_SEQ;
 DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_SEQ;
 DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_SEQ;
@@ -11,6 +12,7 @@ DROP TABLE IF EXISTS BATCH_JOB_INSTANCE;
 
 
 CREATE TABLE IF NOT EXISTS EMPLOYEE(`name` varchar(30), `joining_date` varchar(20), `email_addr` varchar(30) PRIMARY KEY, `dept` varchar(20), `monthly_salary` varchar(50), job_status varchar(20));
+CREATE TABLE IF NOT EXISTS SALESEMPLOYEE(`name` varchar(30), `joining_date` varchar(20), `email_addr` varchar(30) PRIMARY KEY, `dept` varchar(20), `monthly_salary` varchar(50), job_status varchar(20));
 
 CREATE TABLE IF NOT EXISTS BATCH_JOB_INSTANCE  (
 	`JOB_INSTANCE_ID` BIGINT  NOT NULL PRIMARY KEY ,

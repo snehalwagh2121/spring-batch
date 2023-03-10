@@ -1,10 +1,13 @@
 package com.example.demo.chunk.writer;
 
 import com.example.demo.model.Employee;
+import com.example.demo.model.SalesEmployee;
+import com.example.demo.repo.SalesRepository;
 import com.example.demo.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,17 +16,15 @@ import java.util.List;
 @Component
 @StepScope
 @Slf4j
-public class WriterClass implements ItemWriter<Employee> {
+public class WriterClass implements ItemWriter<SalesEmployee> {
 
-    ExcelUtil excelUtil= new ExcelUtil();
-
-    @Value("${com.example.demo.chunk.excel.file.path}")
-    private String filepath;
+    @Autowired
+    SalesRepository salesRepository;
 
     @Override
-    public void write(List<? extends Employee> list) throws Exception {
+    public void write(List<? extends SalesEmployee> list) throws Exception {
         log.info("writing employees to file");
-        excelUtil.writeIntoExcelFile(filepath, (List<Employee>) list);
+        salesRepository.saveAll(list);
         log.info("writing done");
     }
 }
