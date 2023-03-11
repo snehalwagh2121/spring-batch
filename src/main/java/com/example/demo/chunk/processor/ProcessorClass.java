@@ -14,13 +14,12 @@ public class ProcessorClass implements ItemProcessor<Employee, SalesEmployee> {
 
     @Override
     public SalesEmployee process(Employee employee) throws Exception {
-        log.info("processing employee :: " + employee);
-        if (employee.getDept().equals("Sales"))
-        {
+        log.info("processing employee :: " + employee.getName() + ", " + employee.getEmail_addr() + ", " + employee.getJoining_date() + ", " + employee.getDepartment() + ", " + employee.getJob_status() + ", " + employee.getMonthly_salary());
+        if (employee.getDepartment().strip().equals("Sales")) {
             log.info("employee of sales dept");
             return new SalesEmployee()
                     .name(employee.getName())
-                    .dept(employee.getDept())
+                    .dept(employee.getDepartment())
                     .email_addr(employee.getEmail_addr())
                     .job_status(employee.getJob_status())
                     .joining_date(employee.getJoining_date())

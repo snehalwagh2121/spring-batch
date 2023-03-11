@@ -1,8 +1,7 @@
 package com.example.demo.taskette;
 
-import org.springframework.batch.core.Job;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableBatchProcessing
+@Slf4j
+//@EnableBatchProcessing
 public class TasketDemo {
 
     @Autowired
@@ -41,6 +41,7 @@ public class TasketDemo {
 
 //    @Bean
 //    public Job taskletJob() {
+//    log.info("executing chunk job");
 //        return jobs.get("job")
 //                .start(stepOne())
 //                .next(stepTwo())

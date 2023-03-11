@@ -7,13 +7,18 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ItemReader;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class ExcelUtil {
+
+    int nameCell = 0, joiningDateCell = 0, emailAddCell = 0, deptCell = 0, monthlySalCell = 0, jobStatCell = 0;
 
     public List<Employee> readExcelFile(String fileLocation) {
         log.info("file location : " + fileLocation);
@@ -24,14 +29,13 @@ public class ExcelUtil {
 
             Sheet sheet = workbook.getSheetAt(0);
             int i = 0;
-            int nameCell = 0, joiningDateCell = 0, emailAddCell = 0, deptCell = 0, monthlySalCell = 0, jobStatCell = 0;
             for (Row row : sheet) {
                 if (i == 0) {
-                    assignCellValues(row, nameCell, joiningDateCell, emailAddCell, deptCell, monthlySalCell, jobStatCell);
+                    assignCellValues(row);
                     i++;
                     continue;
                 }
-                addEmployeeToEmpList(employeeList, nameCell, joiningDateCell, emailAddCell, deptCell, monthlySalCell, jobStatCell, row);
+                addEmployeeToEmpList(employeeList, row);
                 i++;
             }
             file.close();
@@ -44,7 +48,37 @@ public class ExcelUtil {
         return employeeList;
     }
 
-    private void addEmployeeToEmpList(List<Employee> employeeList, int nameCell, int joiningDateCell, int emailAddCell, int deptCell, int monthlySalCell, int jobStatCell, Row row) {
+    @StepScope
+    public ItemReader<Employee> excelItemReader(String fileLocation) {
+        log.info("file location : " + fileLocation);
+        List<Employee> employeeList = new ArrayList<>();
+        try {
+            FileInputStream file = new FileInputStream(new File(fileLocation));
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+
+            Sheet sheet = workbook.getSheetAt(0);
+            int i = 0;
+            for (Row row : sheet) {
+                if (i == 0) {
+                    assignCellValues(row);
+                    i++;
+                    continue;
+                }
+                addEmployeeToEmpList(employeeList, row);
+                i++;
+            }
+            file.close();
+        } catch (FileNotFoundException e) {
+            log.info("file not found at location : " + fileLocation);
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        var index = new AtomicInteger(0);
+        return () -> index.get() >= employeeList.size() ? null : employeeList.get(index.getAndIncrement());
+    }
+
+    private void addEmployeeToEmpList(List<Employee> employeeList, Row row) {
         employeeList.add(new Employee()
                 .name(row.getCell(nameCell).toString())
                 .joining_date(row.getCell(joiningDateCell).toString())
@@ -54,27 +88,27 @@ public class ExcelUtil {
                 .job_status(row.getCell(jobStatCell).toString()));
     }
 
-    private void assignCellValues(Row row, int nameCell, int joiningDateCell, int emailAddCell, int deptCell, int monthlySalCell, int jobStatCell) {
+    private void assignCellValues(Row row) {
         for (int j = 0; j < row.getLastCellNum(); j++) {
             log.info("cell header value: " + row.getCell(j));
             switch (row.getCell(j).toString()) {
                 case Constants.NAME:
-                    nameCell = j;
+                    this.nameCell = j;
                     break;
                 case Constants.JOINING_DATE:
-                    joiningDateCell = j;
+                    this.joiningDateCell = j;
                     break;
                 case Constants.EMAIL_ADDRESS:
-                    emailAddCell = j;
+                    this.emailAddCell = j;
                     break;
                 case Constants.DEPARTMENT:
-                    deptCell = j;
+                    this.deptCell = j;
                     break;
                 case Constants.MONTHLY_SALARY:
-                    monthlySalCell = j;
+                    this.monthlySalCell = j;
                     break;
                 case Constants.JOB_STATUS:
-                    jobStatCell = j;
+                    this.jobStatCell = j;
                     break;
             }
         }
@@ -118,7 +152,7 @@ public class ExcelUtil {
         row.createCell(0).setCellValue(employee.getName());
         row.createCell(1).setCellValue(employee.getJoining_date());
         row.createCell(2).setCellValue(employee.getEmail_addr());
-        row.createCell(3).setCellValue(employee.getDept());
+        row.createCell(3).setCellValue(employee.getDepartment());
         row.createCell(4).setCellValue(employee.getMonthly_salary());
         row.createCell(5).setCellValue(employee.getJob_status());
     }

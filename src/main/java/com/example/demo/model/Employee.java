@@ -17,7 +17,7 @@ public class Employee {
     private String joining_date;
     @Id
     private String email_addr;
-    private String dept;
+    private String department;
     private String monthly_salary;
     private String job_status;
 
@@ -37,7 +37,7 @@ public class Employee {
     }
 
     public Employee dept(String dept) {
-        this.dept = dept;
+        this.department = dept;
         return this;
     }
 
