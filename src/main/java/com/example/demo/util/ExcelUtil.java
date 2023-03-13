@@ -1,13 +1,13 @@
 package com.example.demo.util;
 
 import com.example.demo.model.Employee;
+import com.example.demo.model.SalesEmployeeCopy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 
 import java.io.*;
@@ -48,7 +48,6 @@ public class ExcelUtil {
         return employeeList;
     }
 
-    @StepScope
     public ItemReader<Employee> excelItemReader(String fileLocation) {
         log.info("file location : " + fileLocation);
         List<Employee> employeeList = new ArrayList<>();
@@ -114,7 +113,7 @@ public class ExcelUtil {
         }
     }
 
-    public void writeIntoExcelFile(String fileLocation, List<Employee> employeeList) {
+    public <T> void writeIntoExcelFile(String fileLocation, List<T> employeeList) {
         log.info("file location : " + fileLocation);
         try {
             XSSFWorkbook workbook = new XSSFWorkbook();
@@ -123,15 +122,15 @@ public class ExcelUtil {
             log.info("sheet created");
             XSSFRow row;
             int i = 0;
-            for (Employee e : employeeList) {
-                row = spreadsheet.createRow(i);
+            for (T e : employeeList) {
                 if (i == 0) {
+                    row = spreadsheet.createRow(i);
                     log.info("setting header");
                     createHeaders(row);
                     log.info("header set: " + row.getCell(0) + "  " + row.getCell(1));
                     i++;
-                    continue;
                 }
+                row = spreadsheet.createRow(i);
                 log.info("adding employee to sheet");
                 addEmployeeToSheet(e, row);
                 log.info("row set: " + row.getCell(0) + "  " + row.getCell(1));
@@ -148,13 +147,22 @@ public class ExcelUtil {
         }
     }
 
-    private void addEmployeeToSheet(Employee employee, XSSFRow row) {
-        row.createCell(0).setCellValue(employee.getName());
-        row.createCell(1).setCellValue(employee.getJoining_date());
-        row.createCell(2).setCellValue(employee.getEmail_addr());
-        row.createCell(3).setCellValue(employee.getDepartment());
-        row.createCell(4).setCellValue(employee.getMonthly_salary());
-        row.createCell(5).setCellValue(employee.getJob_status());
+    private <T> void addEmployeeToSheet(T genericEmployee, XSSFRow row) {
+        if (genericEmployee instanceof SalesEmployeeCopy) {
+            row.createCell(0).setCellValue(((SalesEmployeeCopy) genericEmployee).getName());
+            row.createCell(1).setCellValue(((SalesEmployeeCopy) genericEmployee).getJoining_date());
+            row.createCell(2).setCellValue(((SalesEmployeeCopy) genericEmployee).getEmail_addr());
+            row.createCell(3).setCellValue(((SalesEmployeeCopy) genericEmployee).getDept());
+            row.createCell(4).setCellValue(((SalesEmployeeCopy) genericEmployee).getMonthly_salary());
+            row.createCell(5).setCellValue(((SalesEmployeeCopy) genericEmployee).getJob_status());
+        } else {
+            row.createCell(0).setCellValue(((Employee) genericEmployee).getName());
+            row.createCell(1).setCellValue(((Employee) genericEmployee).getJoining_date());
+            row.createCell(2).setCellValue(((Employee) genericEmployee).getEmail_addr());
+            row.createCell(3).setCellValue(((Employee) genericEmployee).getDepartment());
+            row.createCell(4).setCellValue(((Employee) genericEmployee).getMonthly_salary());
+            row.createCell(5).setCellValue(((Employee) genericEmployee).getJob_status());
+        }
     }
 
     private void createHeaders(XSSFRow row) {

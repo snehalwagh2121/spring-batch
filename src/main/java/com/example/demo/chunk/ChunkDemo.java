@@ -1,9 +1,11 @@
 package com.example.demo.chunk;
 
 import com.example.demo.chunk.processor.ProcessorClass;
+import com.example.demo.chunk.reader.ReaderClass;
 import com.example.demo.chunk.writer.WriterClass;
 import com.example.demo.model.Employee;
 import com.example.demo.model.SalesEmployee;
+import com.example.demo.model.SalesEmployeeCopy;
 import com.example.demo.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -28,24 +30,25 @@ public class ChunkDemo {
     private JobBuilderFactory jobBuilderFactory;
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
-    //    @Autowired
-//    private ReaderClass reader;
     @Autowired
     private ProcessorClass processor;
     @Autowired
     private WriterClass writer;
+    @Autowired
+    private ReaderClass reader;
 
     @Bean
     public Job job() throws Exception {
         log.info("executing chunk job");
         return jobBuilderFactory.get("com.example.demo.chunk job")
-                .flow(chunkStep())
+                .flow(step1())
+                .next(step2())
                 .end()
                 .build();
     }
 
     @Bean
-    public Step chunkStep() throws Exception {
+    public Step step1() throws Exception {
         assert processor != null;
         assert writer != null;
 
@@ -54,6 +57,16 @@ public class ChunkDemo {
                 .reader(excelUtil.excelItemReader(filePath))
                 .processor(processor)
                 .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step step2() throws Exception {
+
+        return stepBuilderFactory.get("step2")
+                .<SalesEmployeeCopy, SalesEmployee>chunk(10)
+                .reader(reader.readSalesTable())
+                .writer(items -> writer.writeIntoFile(items)) //no processor required for this
                 .build();
     }
 

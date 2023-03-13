@@ -1,47 +1,30 @@
 package com.example.demo.chunk.reader;
 
-import com.example.demo.model.Employee;
-import org.springframework.batch.item.file.FlatFileItemReader;
+import com.example.demo.model.SalesEmployeeCopy;
+import com.example.demo.repo.SalesRepositoryCopy;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-//@Component
-//@Slf4j
-public class ReaderClass extends FlatFileItemReader<FlatFileItemReader<Employee>> {
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-//    @Value("${excel.file.location}")
-//    String filePath;
-//
-//    public FlatFileItemReader<Employee> read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-//        log.info("executing reader");
-//        DelimitedLineTokenizer delimitedLineTokenizer= new DelimitedLineTokenizer();
-//        delimitedLineTokenizer.setDelimiter(",");
-//        delimitedLineTokenizer.setStrict(false);
-//        delimitedLineTokenizer.setNames("Names","Joining Date","Email Address","Department","Monthly Salary","Job Status");
-//
-//        BeanWrapperFieldSetMapper<Employee> fieldSetMapper= new BeanWrapperFieldSetMapper<>();
-//        fieldSetMapper.setTargetType(Employee.class);
-//
-//        DefaultLineMapper<Employee> defaultLineMapper = new DefaultLineMapper<>();
-//        defaultLineMapper.setLineTokenizer(delimitedLineTokenizer);
-//        defaultLineMapper.setFieldSetMapper(fieldSetMapper);
-//
-//        FlatFileItemReader<Employee> reader = new FlatFileItemReader<>();
-//        reader.setName("reader");
-//        reader.setResource(new FileSystemResource(filePath));
-//        reader.setLineMapper(defaultLineMapper);
-//        reader.setLinesToSkip(1);
-//        return reader;
-//
-////
-////
-////        return new FlatFileItemReaderBuilder<Employee>()
-////                .name("empReader")
-////                .resource(new ClassPathResource(filePath))
-////                .delimited()
-////                .names("Name","Joining Date", "Email Address","Department","Monthly Salary","Job Status")
-////                .fieldSetMapper(new BeanWrapperFieldSetMapper<Employee>(){{
-////                    setTargetType(Employee.class);
-////                }})
-////                .build();
-//
-//    }
+@Component
+@Slf4j
+public class ReaderClass {
+
+    @Autowired
+    SalesRepositoryCopy salesRepository;
+
+    @StepScope
+    public ItemReader<SalesEmployeeCopy> readSalesTable() {
+        log.info("reading sales copy records from DB");
+        AtomicInteger i = new AtomicInteger(0);
+        List<SalesEmployeeCopy> salesEmployeeList = (List<SalesEmployeeCopy>) salesRepository.findAll();
+        log.info("sales objects from DB = " + salesEmployeeList.size());
+        return (() -> i.get() >= salesEmployeeList.size() ? null : salesEmployeeList.get(i.getAndIncrement()));
+    }
+
 }
