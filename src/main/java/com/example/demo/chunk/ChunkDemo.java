@@ -55,7 +55,7 @@ public class ChunkDemo {
         assert writer != null;
 
         return stepBuilderFactory.get("step1")
-                .<Employee, SalesEmployee>chunk(10)
+                .<Employee, SalesEmployee>chunk(1)
                 .reader(excelUtil.excelItemReader(filePath))
                 .processor(processor)
                 .writer(writer)
@@ -66,7 +66,7 @@ public class ChunkDemo {
     public Step step2() throws Exception {
 
         return stepBuilderFactory.get("step2")
-                .<SalesEmployeeCopy, SalesEmployee>chunk(10)
+                .<SalesEmployeeCopy, SalesEmployee>chunk(1)
                 .reader(reader.readSalesTable())
                 .writer(items -> writer.writeIntoFile(items)) //no processor required for this
                 .build();

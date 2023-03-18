@@ -2,14 +2,11 @@ package com.example.demo.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@EnableConfigurationProperties
 @RefreshScope
 @Slf4j
 public class SampleController {
@@ -18,8 +15,9 @@ public class SampleController {
     String defaultMsg;
 
     @GetMapping("/getmessage")
-    public String loadMessage(){
-        log.info("checking runtime config values: "+defaultMsg);
-        return defaultMsg;
+    public String loadMessage() {
+        log.info("checking runtime config values: " + defaultMsg);
+        return this.defaultMsg;
     }
+
 }
