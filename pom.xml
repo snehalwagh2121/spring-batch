@@ -93,6 +93,12 @@
             <version>2.2.8.RELEASE</version>
         </dependency>
 
+<!--        hysterix-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+            <version>2.2.5.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

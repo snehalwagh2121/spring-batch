@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,22 @@ public class SampleController {
                 String.class
         );
         return msg;
+    }
+
+
+    @HystrixCommand(fallbackMethod = "hysterixFallback")
+    @GetMapping("/getmessagefromservice2Hysterix")
+    public String loadMessageFromService2WithHysterix() {
+        log.info("calling service 2 /message api");
+        String msg= restTemplate.getForObject(
+                "http://localhost:9011/service2/message/",
+                String.class
+        );
+        return msg;
+    }
+
+    public String hysterixFallback(){
+        return "service 2 is down please try after some time";
     }
 
 }
