@@ -32,9 +32,13 @@ public class TaskletOne implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         log.info("tasklet 1 start");
 
-        List<Employee> employeeList = excelUtil.readExcelFile(fileLocation);
-        log.info("employee list size: " + employeeList.size());
-        taskletService.insertInDb(employeeList);
+        try{
+            List<Employee> employeeList = excelUtil.readExcelFile(fileLocation);
+            log.info("employee list size: " + employeeList.size());
+            taskletService.insertInDb(employeeList);
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
 
         log.info("tasklet 1 end");
         return RepeatStatus.FINISHED;

@@ -29,10 +29,14 @@ public class TaskletTwo implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         log.info("tasklet 2 start");
-        List<Employee> employeeList = service.getEmployeesFromDB();
-        log.info("employees got from DB : " + employeeList.size());
-        log.info("writing into excel file now");
-        excelUtil.writeIntoExcelFile(filepath, employeeList);
+        try{
+            List<Employee> employeeList = service.getEmployeesFromDB();
+            log.info("employees got from DB : " + employeeList.size());
+            log.info("writing into excel file now");
+            excelUtil.writeIntoExcelFile(filepath, employeeList);
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
         log.info("tasklet 2 end");
         return RepeatStatus.FINISHED;
     }
